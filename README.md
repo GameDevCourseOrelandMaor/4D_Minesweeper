@@ -1,6 +1,8 @@
 # 4D_Minesweeper
 
-It's like Minesweeper, but for bigger nerds! ;)
+It's like Minesweeper, but for bigger nerds! ;)</br>
+Itch.io link: [Click here to play](https://gamedevcourseorelandmaor.itch.io/4d-minesweeper-core-proccess)
+
 
 מהות המשחק <br/>
 המשחק הינו כמו משחק מוקשים קלאסי, אך לא בדו מיימד כפי שרגילים, ולא בתלת מיימד כפי שחלק מכירים, אלא בארבע מיימד! משחק לפתיחת כל המפה וסימון כל המוקשים על גבי עולם ארבע מיימדי.
