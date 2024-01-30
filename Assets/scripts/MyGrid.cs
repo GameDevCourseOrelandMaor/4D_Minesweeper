@@ -3,16 +3,18 @@ using System.Collections;
 
 
 
-public class Grid : MonoBehaviour
+public class MyGrid : MonoBehaviour
 {
 
     [SerializeField] private Mine prefabToSpawn;
+    [SerializeField] private float precentageOfMines = 0.2f;
+    [SerializeField] private bool isMapArmed = false;
 
     //Grid attributes:
     public GameObject[,,,] map;
 
     [Tooltip("The dimensions of the mine grid")]
-    [SerializeField] private int xdim = 1, ydim = 1, zdim = 1, wdim = 1;
+    [SerializeField] private int xdim = 1, ydim = 1, zdim = 1; // wdim = 1; - for future work
 
     void Start()
     {
@@ -47,13 +49,12 @@ public class Grid : MonoBehaviour
             }
         }
 
-        int numOfMines = (int)(map.GetLength(0) * map.GetLength(1) * map.GetLength(2) * map.GetLength(3) * 0.2);
-        Debug.Log("number of mines: " + numOfMines);
-        setMines(numOfMines);
+        /*int numOfMines = (int)(map.GetLength(0) * map.GetLength(1) * map.GetLength(2) * map.GetLength(3) * 0.2);
+        Debug.Log("number of mines: " + numOfMines);*/
 
     }
 
-    public void setMines(int n)
+    public void setMines(int n, int xCurrMine, int yCurrMine, int zCurrMine, int wCurrMine)
     {
         Debug.Log("in setMines: ");
         int x;
@@ -69,7 +70,8 @@ public class Grid : MonoBehaviour
             z = (int)(Random.Range(0, map.GetLength(2)));
             w = (int)(Random.Range(0, map.GetLength(3)));
             Debug.Log("is mine [" + x + "," + y + "," + z + "," + w + "] armed? ");
-            if (!map[x, y, z, w].GetComponent<Mine>().IsArmed)
+            if (!map[x, y, z, w].GetComponent<Mine>().IsArmed 
+                && !(x==xCurrMine && y==yCurrMine && z==zCurrMine && w==wCurrMine) )
             {
                 Debug.Log("No, arming mine...");
                 Mine tempRef =map[x, y, z, w].GetComponent<Mine>();
@@ -83,11 +85,16 @@ public class Grid : MonoBehaviour
             else { Debug.Log("yes, not arming"); }
         }
         Debug.Log("amount of armed mines: " + amountOfArmedMines);
+        isMapArmed = true;
+    
     }
 
     // opens the cell
     public void openCell(int x, int y, int z, int w)
     {
+        if (!isMapArmed) { setMines((int)(xdim*ydim*zdim* precentageOfMines), x,y,z,w ); }
+        
+
         Debug.Log("in openCell, opening mine: " + x + ", " + y + ", " + z + ", " + w);
 
         if (!(x >= 0 && x < map.GetLength(0) && y >= 0 && y < map.GetLength(1) && z >= 0 && z < map.GetLength(2) && w >= 0 && w < map.GetLength(3)))
@@ -176,130 +183,3 @@ public class Grid : MonoBehaviour
     }
 
 }
-
-/* public string toString()
-  {
-      string s = "";
-      for (int x = 0; x < map.GetLength(0); x++)
-      {
-          s = s + "\n" + "cube number " + x.ToString() + "\n";
-          for (int y = 0; y < map.GetLength(1); y++)
-          {
-              s = s + "\n"; //+"depth = "+Integer.toString(y)+"\n";
-
-              for (int z = 0; z < map.GetLength(2); z++)
-              {
-                  for (int w = 0; w < map.GetLength(3); w++)
-                  {
-                      if (map[x, y, z, w].isArmed())
-                          s = s + "X";
-                      else { s = s + "#"; }
-                  }
-                  s = s + "\n";
-              }
-          }
-          s = s + "\n";
-
-      }
-      return s;
-  }*/
-
-/* public string showMapDev()
- {
-     string s = "";
-     for (int x = 0; x < map.GetLength(0); x++)
-     {
-         s = s + "\n" + "cube number " + (x + 1).ToString() + "\n";
-         for (int y = 0; y < map.GetLength(1); y++)
-         {
-             s = s + "\n"; //+"depth = "+Integer.toString(y)+"\n";
-
-             for (int z = 0; z < map.GetLength(2); z++)
-             {
-
-                 for (int w = 0; w < map.GetLength(3); w++)
-                 {
-                     //	if(map[x][y][z][w].isOpened)
-                     if (map[x, y, z, w].isArmed())
-                         s = s + "X | ";
-
-                     else { s = s + map[x, y, z, w].getNeighborCount().ToString() + " | "; }
-                 }
-                 s = s + "\n";
-             }
-         }
-         s = s + "\n";
-
-     }
-     return s;
-
- }*/
-/*  public string showMap()
-  {
-      string s = "";
-      for (int x = 0; x < map.GetLength(0); x++)
-      {
-          s = s + "\n" + "cube number " + (x + 1).ToString() + "\n";
-          for (int y = 0; y < map.GetLength(1); y++)
-          {
-              s = s + "\n"; //+"depth = "+Integer.toString(y)+"\n";
-
-              for (int z = 0; z < map.GetLength(2); z++)
-              {
-
-                  for (int w = 0; w < map.GetLength(3); w++)
-                  {
-                      if (map[x, y, z, w].isOpened())
-                      {
-                          if (map[x, y, z, w].isArmed())
-                              s = s + "X | ";
-
-
-                          else { s = s + map[x, y, z, w].getNeighborCount().ToString() + " | "; }
-                      }
-                      else if (map[x, y, z, w].isFlagged())
-                          s = s + "F" + " | ";
-                      else { s = s + "#" + " | "; }
-                  }
-                  s = s + "\n";
-              }
-          }
-          s = s + "\n";
-
-      }
-      return s;
-
-  }*/
-
-
-
-/*public void flagCell(int x, int y, int z, int w)
-{
-    map[x, y, z, w].flagMine();
-
-}*/
-
-/*   public void setMinesAtRandom()
-   {
-       for (int x = 0; x < map.GetLength(0); x++)
-       {
-           for (int y = 0; y < map.GetLength(1); y++)
-           {
-               for (int z = 0; z < map.GetLength(2); z++)
-               {
-                   for (int w = 0; w < map.GetLength(3); w++)
-                   {
-                       if (Random.Range(0, 1) > 0.9)
-                       {
-                           map[x, y, z, w].putMine();
-                           //updates neighbors
-                           updateNeighbors(x, y, z, w);
-
-
-                       }
-
-                   }
-               }
-           }
-       }
-   }*/

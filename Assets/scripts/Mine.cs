@@ -80,14 +80,14 @@ public class Mine : MonoBehaviour
     }
 
     //References to objects and components:
-    [SerializeField] private Grid gridRef; // reference to the grid
+    [SerializeField] private MyGrid gridRef; // reference to the grid
     [SerializeField] private GameObject grid; // to attach the grid object in game
     [SerializeField] private GameObject mesh; // to attach the physical appearance of the mine
     [SerializeField] private GameObject numOfNeighbors; // to attach the physical appearance of the mine
     void Start()
     {
         //Debug.Log("Mine script is running");
-        grid = GameObject.Find("Grid"); // find the grid object by name
+        grid = GameObject.Find("GridObject"); // find the grid object by name
 
         //Debug.Log("instanciating a mine");
        /* this.is_Opened = false;
@@ -143,7 +143,7 @@ public class Mine : MonoBehaviour
           + ", " + GetComponent<Transform>().position.y
           + ", " + GetComponent<Transform>().position.z);
 
-        grid.GetComponent<Grid>().openCell((int)xPos, (int)yPos, (int)zPos, (int)wPos);
+        grid.GetComponent<MyGrid>().openCell((int)xPos, (int)yPos, (int)zPos, (int)wPos);
 
     }
 
