@@ -96,7 +96,7 @@ public class MyGrid : MonoBehaviour
 
         Debug.Log("in openCell, opening mine: " + x + ", " + y + ", " + z + ", " + w);
 
-        if (!(x >= 0 && x < map.GetLength(0) && y >= 0 && y < map.GetLength(1) && z >= 0 && z < map.GetLength(2) && w >= 0 && w < map.GetLength(3)))
+        if (IsMineOutOfBounds(x, y, z, w))
         {
             Debug.Log("invalid cordinates, please try again");
             return;
@@ -114,10 +114,7 @@ public class MyGrid : MonoBehaviour
     public void openCellRecursive(int x, int y, int z, int w)
     {
         // if Mine is out of map bounds then return
-        if (!(x >= 0 && x < map.GetLength(0)
-            && y >= 0 && y < map.GetLength(1)
-            && z >= 0 && z < map.GetLength(2)
-            && w >= 0 && w < map.GetLength(3)))
+        if (IsMineOutOfBounds(x, y, z, w))
         {
             return;
         }
@@ -141,20 +138,20 @@ public class MyGrid : MonoBehaviour
         map[x, y, z, w].GetComponent<Mine>().openThisCell();
 
         //recursively calls all the function again on all it's neighbors:
-        for (int xi = x - 1; xi < x + 2; xi++)
+        for (int xj = x - 1; xj < x + 2; xj++)
         {
-            if (xi >= 0 && xi < map.GetLength(0))
-                for (int yi = y - 1; yi < y + 2; yi++)
+            if (xj >= 0 && xj < map.GetLength(0))
+                for (int yj = y - 1; yj < y + 2; yj++)
                 {
-                    if (yi >= 0 && yi < map.GetLength(1))
-                        for (int zi = z - 1; zi < z + 2; zi++)
+                    if (yj >= 0 && yj < map.GetLength(1))
+                        for (int zj = z - 1; zj < z + 2; zj++)
                         {
-                            if (zi >= 0 && zi < map.GetLength(2))
-                                for (int wi = w - 1; wi < w + 2; wi++)
+                            if (zj >= 0 && zj < map.GetLength(2))
+                                for (int wj = w - 1; wj < w + 2; wj++)
                                 {
-                                    if (wi >= 0 && wi < map.GetLength(3))
-                                        if (!((xi == x) && (yi == y) && (zi == z) && (wi == w)))
-                                            openCellRecursive(xi, yi, zi, wi);
+                                    if (wj >= 0 && wj < map.GetLength(3))
+                                        if (!((xj == x) && (yj == y) && (zj == z) && (wj == w)))
+                                            openCellRecursive(xj, yj, zj, wj);
                                 }
                         }
                 }
@@ -187,6 +184,16 @@ public class MyGrid : MonoBehaviour
                 }
         }
 
+    }
+
+    private bool IsMineOutOfBounds(int x, int y, int z, int w)
+    {
+        if ((x >= 0 && x < map.GetLength(0)
+                && y >= 0 && y < map.GetLength(1)
+                && z >= 0 && z < map.GetLength(2)
+                && w >= 0 && w < map.GetLength(3)))
+            return false;
+        return true;
     }
 
 }
