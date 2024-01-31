@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
-using TMPro;
+﻿using TMPro;
+using UnityEngine;
 
 public class Mine : MonoBehaviour
 {
@@ -11,10 +10,10 @@ public class Mine : MonoBehaviour
     [SerializeField] private float wPos;
 
     //Mine's attributes:
-    [SerializeField] private bool is_Opened;
-    [SerializeField] private bool is_Flagged;
-    [SerializeField] private bool is_Armed;
-    [SerializeField] private int neighborCount;
+    [SerializeField] private bool is_Opened; // has the mine been opened?
+    [SerializeField] private bool is_Flagged;// has the mined been flagged?
+    [SerializeField] private bool is_Armed;  // is the mine armed and is a "bad" mine?
+    [SerializeField] private int neighborCount; // number of adjacent neighbors that are armed
     [SerializeField] private GameObject prefabMine;
 
     // Properties for private variables
@@ -61,10 +60,11 @@ public class Mine : MonoBehaviour
     }
     public void putMine()
     {
-       is_Armed = true;
-        Debug.Log("in func putMine, armed " + xPos + ", " + yPos + ", " + zPos+
-            " And location: " + GetComponent<Transform>().position.x + 
-            ", " + GetComponent<Transform>().position.y + ", " + GetComponent<Transform>().position.z + ", ");
+        is_Armed = true;
+        /*    Debug.Log("in func putMine, armed " + xPos + ", " + yPos + ", " + zPos +
+                " And location: " + GetComponent<Transform>().position.x +
+                ", " + GetComponent<Transform>().position.y + ", " + GetComponent<Transform>().position.z + ", ");
+        */
     }
 
     public int NeighborCount
@@ -80,42 +80,22 @@ public class Mine : MonoBehaviour
     }
 
     //References to objects and components:
-    [SerializeField] private MyGrid gridRef; // reference to the grid
+    //[SerializeField] private MyGrid gridRef; // reference to the grid
     [SerializeField] private GameObject grid; // to attach the grid object in game
+    [SerializeField] private string gridName;
     [SerializeField] private GameObject mesh; // to attach the physical appearance of the mine
     [SerializeField] private GameObject numOfNeighbors; // to attach the physical appearance of the mine
     void Start()
     {
         //Debug.Log("Mine script is running");
-        grid = GameObject.Find("GridObject"); // find the grid object by name
-
-        //Debug.Log("instanciating a mine");
-       /* this.is_Opened = false;
-        this.is_Flagged = false;
-        this.is_Armed = false;
-        this.neighborCount = 0;*/
+        grid = GameObject.Find(gridName); // find the grid object by name
         xPos = GetComponent<Transform>().position.x;
         yPos = GetComponent<Transform>().position.y;
         zPos = GetComponent<Transform>().position.z;
 
     }
 
-
-
-   /*
-    public bool isArmed()
-    {
-        return is_Armed;
-    }
-    public bool isOpened()
-    {
-        return this.is_Opened;
-    }
-    public bool isFlagged()
-    {
-        return this.is_Flagged;
-    }*/
-
+    // For future work, add the "flag" option
     public void flagMine()
     {
         this.is_Flagged = true;
@@ -124,12 +104,13 @@ public class Mine : MonoBehaviour
     public void incNeighborCount()
     {
         neighborCount++;
-        //numOfNeighbors.GetComponent<Mine>().updateNeighborcountVisuals();
     }
     public int getNeighborCount()
     {
         return neighborCount;
     }
+
+    //when the player clicks on a mine, opens it and update the text of the mine (of how many neighbors are there)
     public void openThisCell()
     {
         is_Opened = true;
@@ -139,27 +120,10 @@ public class Mine : MonoBehaviour
 
     void OnMouseUp()
     {
-        Debug.Log("Mouse clicked on Mine: " + GetComponent<Transform>().position.x
+        /*Debug.Log("Mouse clicked on Mine: " + GetComponent<Transform>().position.x
           + ", " + GetComponent<Transform>().position.y
           + ", " + GetComponent<Transform>().position.z);
-
+        */
         grid.GetComponent<MyGrid>().openCell((int)xPos, (int)yPos, (int)zPos, (int)wPos);
-
     }
-
-    public void openMine() 
-    {
-        //mesh.GetComponent<MeshRenderer>().enabled = false;
-    }
-
-    public void updateNeighborcountVisuals() 
-    {
-        //numOfNeighbors.GetComponent<NumOfNeigbors>().SetNumber();
-    }
-    
-    // Update is called once per frame
-    /*   private void Update()
-       {}
-    */
 }
-

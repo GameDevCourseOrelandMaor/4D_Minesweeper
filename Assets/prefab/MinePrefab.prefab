@@ -248,8 +248,8 @@ MonoBehaviour:
   is_Armed: 0
   neighborCount: 0
   prefabMine: {fileID: 0}
-  gridRef: {fileID: 0}
   grid: {fileID: 0}
+  gridName: GridObject
   mesh: {fileID: 1048178499668356394}
   numOfNeighbors: {fileID: 8706985316292447093}
 --- !u!1001 &197179805383551034
