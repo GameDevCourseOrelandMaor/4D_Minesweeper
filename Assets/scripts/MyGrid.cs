@@ -1,16 +1,14 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 
 
 public class MyGrid : MonoBehaviour
 {
-
+    // MyGrid Attributes:
     [SerializeField] private Mine prefabToSpawn;
+    [Tooltip("when filling up the map, the amount of generated mines depends on the precentage")]
     [SerializeField] private float precentageOfMines = 0.2f;
-    [SerializeField] private bool isMapArmed = false;
-
-    //Grid attributes:
+    [SerializeField] private bool isMapArmed = false; // for controlling that we only arm the map after the first mine click by the player
     public GameObject[,,,] map;
 
     [Tooltip("The dimensions of the mine grid")]
@@ -41,19 +39,17 @@ public class MyGrid : MonoBehaviour
                     for (int x = 0; x < map.GetLength(0); x++)
                     {
                         map[x, y, z, w] = Instantiate(prefabToSpawn.gameObject, new Vector3(x, y, z), Quaternion.identity);
-
-                        //map[x, y, z, w] = new Cell(x, y, z, w, prefabMine);
                         Debug.Log("created mine[ " + x + "," + y + "," + z + "," + w + " ]");
                     }
                 }
             }
         }
-
+        //for future work:
         /*int numOfMines = (int)(map.GetLength(0) * map.GetLength(1) * map.GetLength(2) * map.GetLength(3) * 0.2);
         Debug.Log("number of mines: " + numOfMines);*/
-
     }
 
+    //arming the mines, and not arming the clicked mine that called this function, noted by its dimentions:
     public void setMines(int n, int xCurrMine, int yCurrMine, int zCurrMine, int wCurrMine)
     {
         Debug.Log("in setMines: ");
@@ -69,12 +65,15 @@ public class MyGrid : MonoBehaviour
             y = (int)(Random.Range(0, map.GetLength(1)));
             z = (int)(Random.Range(0, map.GetLength(2)));
             w = (int)(Random.Range(0, map.GetLength(3)));
+
             Debug.Log("is mine [" + x + "," + y + "," + z + "," + w + "] armed? ");
-            if (!map[x, y, z, w].GetComponent<Mine>().IsArmed 
-                && !(x==xCurrMine && y==yCurrMine && z==zCurrMine && w==wCurrMine) )
+
+            //if isn't armed and isnt the first clicked mine in the game:
+            if (!map[x, y, z, w].GetComponent<Mine>().IsArmed
+                && !(x == xCurrMine && y == yCurrMine && z == zCurrMine && w == wCurrMine))
             {
                 Debug.Log("No, arming mine...");
-                Mine tempRef =map[x, y, z, w].GetComponent<Mine>();
+                Mine tempRef = map[x, y, z, w].GetComponent<Mine>();
                 Debug.Log("changing is_armed value of mine(xyzPos): " + tempRef.XPos + ", " + tempRef.YPos + ", " + tempRef.ZPos + ", ");
                 map[x, y, z, w].GetComponent<Mine>().putMine();
                 tempRef.putMine();
@@ -86,22 +85,20 @@ public class MyGrid : MonoBehaviour
         }
         Debug.Log("amount of armed mines: " + amountOfArmedMines);
         isMapArmed = true;
-    
+
     }
 
     // opens the cell
     public void openCell(int x, int y, int z, int w)
     {
-        if (!isMapArmed) { setMines((int)(xdim*ydim*zdim* precentageOfMines), x,y,z,w ); }
-        
+        if (!isMapArmed) { setMines((int)(xdim * ydim * zdim * precentageOfMines), x, y, z, w); }
+
 
         Debug.Log("in openCell, opening mine: " + x + ", " + y + ", " + z + ", " + w);
 
         if (!(x >= 0 && x < map.GetLength(0) && y >= 0 && y < map.GetLength(1) && z >= 0 && z < map.GetLength(2) && w >= 0 && w < map.GetLength(3)))
         {
-            //System.out.println("invalid cordinates, please try again");
             Debug.Log("invalid cordinates, please try again");
-            //GetComponent<Transform>().position = new Vector3(1, 1, 0);
             return;
         }
         if (map[x, y, z, w].GetComponent<Mine>().IsArmed)
@@ -113,6 +110,7 @@ public class MyGrid : MonoBehaviour
         openCellRecursive(x, y, z, w);
     }
 
+    //recursively keeps opening all adjecant neighbors until reaching a none 0-neighboring mine:
     public void openCellRecursive(int x, int y, int z, int w)
     {
         // if Mine is out of map bounds then return
@@ -123,17 +121,26 @@ public class MyGrid : MonoBehaviour
         {
             return;
         }
+
+        //if a mine is armed then return
         if (map[x, y, z, w].GetComponent<Mine>().IsArmed)
             return;
+
+        //if a mine has more than 0 neighboring armed mines then open it and return
         if (map[x, y, z, w].GetComponent<Mine>().getNeighborCount() != 0)
         {
             map[x, y, z, w].GetComponent<Mine>().openThisCell();
             return;
         }
+
+        //if mine is already open then return
         if (map[x, y, z, w].GetComponent<Mine>().IsOpened)
             return;
-        //last case is that we hit a 0 mines cell:
+
+        //last case is that we hit a 0 armed neighboring mines cell:
         map[x, y, z, w].GetComponent<Mine>().openThisCell();
+
+        //recursively calls all the function again on all it's neighbors:
         for (int xi = x - 1; xi < x + 2; xi++)
         {
             if (xi >= 0 && xi < map.GetLength(0))
@@ -156,6 +163,7 @@ public class MyGrid : MonoBehaviour
     }
 
 
+    // armed mine updates all its neighbors about itself being armed:
     public void updateNeighbors(int x, int y, int z, int w)
     {
 
@@ -171,7 +179,6 @@ public class MyGrid : MonoBehaviour
                                 for (int wi = w - 1; wi < w + 2; wi++)
                                 {
                                     if (wi >= 0 && wi < map.GetLength(3))
-                                        //TODO: REPLACE IF STATEMENT WITH DEC-NEIGHBOR
                                         if (!((xi == x) && (yi == y) && (zi == z) && (wi == w)))
                                             map[xi, yi, zi, wi].GetComponent<Mine>().incNeighborCount();
 
